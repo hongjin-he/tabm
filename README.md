@@ -1,3 +1,36 @@
+## 🇨🇳 中文说明 / Bilingual Notes (added by [@hongjin-he](https://github.com/hongjin-he))
+
+> This is a fork of [yandex-research/tabm](https://github.com/yandex-research/tabm) (Apache-2.0). All credit for the model and paper goes to the original authors. This fork adds a bilingual (EN/中文) walkthrough and a quantitative-finance application demo — it does not modify the core method.
+
+### 這是什麼 / What is TabM
+
+TabM（ICLR 2025）是 Yandex Research 提出的表格深度學習模型，核心想法是用**參數高效的權重共享集成**（每個子模型只有少量獨立參數，其餘權重共享）取代傳統需要訓練 K 個完整獨立模型的深度集成（deep ensemble），在保持集成帶來的精度提升的同時，把訓練/推理成本壓到接近單模型的水平。
+
+在西方的表格 ML / 量化圈子裡，比起 XGBoost、LightGBM、CatBoost 這些梯度提升方法，TabM 這類「表格專用深度學習」路線的討論度明顯偏低，但其論文中在多個標準表格 benchmark 上的表現持平或優於梯度提升樹，且更容易配合表示學習（representation learning）、遷移學習等深度學習生態，這對做多因子/多資產聯合建模的量化研究是有意思的方向。
+
+**核心賣點**：
+- 用單次前向傳播計算出 K 個「虛擬子模型」的預測，再做集成平均 → 顯著降低集成的訓練/推理開銷
+- 在 TabZilla / Grinsztajn 等標準 tabular benchmark 上與梯度提升樹（GBDT）打平甚至更優
+- 對高基數類別特徵、缺失值等表格數據常見問題有較好的原生支持
+
+### 量化應用場景 / Where this fits quant research
+
+金融特徵工程產出的通常就是**表格數據**（因子矩陣：行=股票/日期，列=因子），這正是 TabM 的原生應用場景。可能的切入點：
+
+1. **多因子選股模型**：把傳統線性/樹模型的因子合成步驟換成 TabM，比較樣本外 IC / Rank IC
+2. **信用風險/違約預測**：表格深度學習在此類任務上传統上落後於 GBDT，TabM 是少數能追平的深度學習方法
+3. **與 tabular foundation model（如 TabPFN）串聯**：TabM 的集成表示可作為下游模型的特徵
+
+See [`quant_demo/`](./quant_demo) for a runnable synthetic-data example applying TabM to a factor-model-style regression task.
+
+### Quick Start
+```bash
+uv sync  # or pip install -e .
+python quant_demo/factor_model_demo.py
+```
+
+---
+*Original README follows below.*
 # TabM: Advancing Tabular Deep Learning With Parameter-Efficient Ensembling" (ICLR 2025)<!-- omit in toc -->
 
 :scroll: [arXiv](https://arxiv.org/abs/2410.24210)
